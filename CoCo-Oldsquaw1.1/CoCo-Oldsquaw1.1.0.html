@@ -1,0 +1,249 @@
+﻿<!--
+【写在开头】
+您好，尊敬的CoCo用户！
+欢迎来到CoCo-Oldsquaw For Mobile
+这是一个专为手机用户打造的镜像站点（当然电脑也是可以使用的）
+
+Oldsquaw是一个自行组织的微项目团队
+该项目的主营内容为AI控件制作
+当然时不时也跨界搞一些东西，比如您现在看到的这个页面
+欢迎加入我们！
+这是Oldsquaw镜像部的Q群号：907170983
+欢迎加入我们！在这里您可以天马行空的改造CoCo!
+该页面由耗子&小宏制作而成，魔改自原版CoCo:https://coco.codemao.cn
+-->
+<!doctype html>
+<html lang="en">
+<!--由耗子&小宏制作-->
+<!--鸣谢王淳彧提供域名支持-->
+<!--CoCo-Oldsquaw-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="CoCo-Oldsquaw镜像编辑器" />
+    <meta name="keywords" content="App 工匠，App Craft, AppCraft, codemao, 编程猫, CoCo" />
+    <meta name="environment" content="production" />
+    <title>CoCo-Oldsquaw For Mobile</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link href="https://creation.codemao.cn/coconut/web/1.21.0/static/css/0.a3c8f76e.chunk.css" rel="stylesheet">
+    <link href="https://creation.codemao.cn/coconut/web/1.21.0/static/css/main.4289aec6.chunk.css" rel="stylesheet">
+    <script>
+        /*
+         * ============================================================================== *
+         ******************************* CoCoClick v1.0.1 *******************************
+         ****************** Copyright (C) 2023 xiaohong2022 *****************
+         * ============================================================================== *
+         */
+
+        // ==UserScript==
+        // @name         CoCoClick
+        // @namespace    http://tampermonkey.net/
+        // @version      1.0.1
+        // @description  CoCo点击方式添加控件！
+        // @author       小宏XeLa
+        // @match        *://coco.codemao.cn/editor/*
+        // @icon         https://coco.codemao.cn/favicon.ico
+        // @grant        GM_addStyle
+        // @license      GPL-3.0
+        // @run-at       document-start
+        // ==/UserScript==
+        (function () {
+            'use strict';
+            var play = { setData(n, v) { this[n] = v }, getData(n) { return this[n] } }
+            setInterval(() => {
+                document.querySelectorAll(`*[class*="WidgetList_widgetItem"]`).forEach(e => {
+                    if (e.cococlick) return;
+                    e.cococlick = true;
+                    e.draggable = false;
+                    e.style.cursor = "pointer";
+                    e.addEventListener("click", function () {
+                        var sen = document.querySelector(`*[class*="PreviewArea_main"]`);
+                        var x = sen.offsetLeft + sen.offsetWidth / 2;
+                        var y = sen.offsetTop + sen.offsetHeight / 2;
+                        var keys = Object.keys(e);
+                        var key = keys.find(e => e.startsWith("__reactEventHandlers"));
+                        e[key].onDragStart({ target: e, dataTransfer: play, persist() { return true }, clientX: x, clientY: y, x: x + 100, y })
+                        var stage = document.querySelector(`*[class*="PreviewArea_stage"]`);
+                        var keys2 = Object.keys(stage);
+                        var key2 = keys2.find(e => e.startsWith("__reactEventHandlers"));
+                        stage[key2].onDragOver({ preventDefault() { } })
+                        stage[key2].onDrop({ dataTransfer: play, persist() { return true }, clientX: x + 142, clientY: y - 3, x: x + 100, y })
+                        if (e.dataset.widgetType == "BRUSH_WIDGET" || e.dataset.widgetType == "ACTOR_WIDGET") {
+                            document.querySelectorAll(`*[data-widget-type="CANVAS_WIDGET"][id*="CANVAS_WIDGET"]`).forEach((en, index, array) => {
+                                var keys3 = Object.keys(en);
+                                var key3 = keys3.find(e => e.startsWith("__reactEventHandlers"));
+                                function click(ew) {
+                                    en[key3].onDragEnter({ dataTransfer: play, persist() { return true }, stopPropagation() { return true } });
+                                    stage[key2].onDragOver({ preventDefault() { } })
+                                    en[key3].onDrop({ dataTransfer: play, persist() { return true }, stopPropagation() { return true }, clientX: ew.clientX, clientY: ew.clientY, x: ew.x, y: ew.y });
+                                    stage[key2].onDrop({ dataTransfer: play, persist() { return true } })
+                                    array.forEach(e => e.removeEventListener("click", e.cococlickfunc, false))
+                                    e[key].onDragEnd({})
+                                }
+                                en.cococlickfunc = click;
+                                en.addEventListener("click", click, false);
+                            })
+                        } else {
+                            e[key].onDragEnd()
+                        }
+                    })
+                })
+            }, 100);
+        })();
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            function replaceTextInIframes() {
+                const iframeElements = document.querySelectorAll("iframe");
+
+                iframeElements.forEach(iframe => {
+                    if (iframe.COCOMSPS) return;
+                    if (iframe.temp) return;
+                    const iframeSrc = iframe.getAttribute("src");
+                    if (iframeSrc && iframeSrc.includes("editor/")) {
+                        const newSrc = iframeSrc.replace("/editor/", "https://coco.codemao.cn/editor/");
+                        iframe.src = newSrc;
+                        iframe.temp = true;
+                    }
+                });
+            }
+
+            setInterval(replaceTextInIframes, 100);
+        });
+    </script>
+    <script>
+        !function () {
+            var x = history.pushState;
+            history.pushState = function (data, unused, url) {
+                console.log(arguments);
+                x(data, unused, url);
+            };
+            var y = history.replaceState;
+            history.replaceState = function (data, unused, url) {
+                console.log(arguments);
+                y(data, unused, url);
+            };
+        }()
+    </script>
+    <!--界面修改-->
+<!--版权声明-->
+<script>
+      //声明版权
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchText = "通用积木";
+      const replaceText = "Oldsquaw提供镜像服务";
+  
+      // Recursive function to replace text in a node and its children
+      function replaceTextInNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const content = node.nodeValue.replace(searchText, replaceText);
+          node.nodeValue = content;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          node.childNodes.forEach(childNode => replaceTextInNode(childNode));
+        }
+      }
+  
+      replaceTextInNode(document.body);
+    });
+  </script>
+  <!--版本更新-->
+<script>
+    //提示
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchText = "版本更新";
+    const replaceText = "Oldsquaw-CoCo版本：1.1.0 基于CoCo：1.21.0";
+
+    // Recursive function to replace text in a node and its children
+    function replaceTextInNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const content = node.nodeValue.replace(searchText, replaceText);
+        node.nodeValue = content;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        node.childNodes.forEach(childNode => replaceTextInNode(childNode));
+      }
+    }
+
+    replaceTextInNode(document.body);
+  });
+</script>
+<script>
+    //提示
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchText = "绘图动画";
+    const replaceText = "手机暂不支持";
+
+    // Recursive function to replace text in a node and its children
+    function replaceTextInNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const content = node.nodeValue.replace(searchText, replaceText);
+        node.nodeValue = content;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        node.childNodes.forEach(childNode => replaceTextInNode(childNode));
+      }
+    }
+
+    replaceTextInNode(document.body);
+  });
+</script>
+<script>
+    //提示
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchText = "关于我们";
+    const replaceText = "Oldsquaw镜像部Q群号：907170983";
+
+    // Recursive function to replace text in a node and its children
+    function replaceTextInNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const content = node.nodeValue.replace(searchText, replaceText);
+        node.nodeValue = content;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        node.childNodes.forEach(childNode => replaceTextInNode(childNode));
+      }
+    }
+
+    replaceTextInNode(document.body);
+  });
+</script>
+
+</head>
+
+<body><noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script>!function (e) { function t(t) { for (var n, o, u = t[0], f = t[1], i = t[2], l = 0, d = []; l < u.length; l++)o = u[l], Object.prototype.hasOwnProperty.call(a, o) && a[o] && d.push(a[o][0]), a[o] = 0; for (n in f) Object.prototype.hasOwnProperty.call(f, n) && (e[n] = f[n]); for (s && s(t); d.length;)d.shift()(); return c.push.apply(c, i || []), r() } function r() { for (var e, t = 0; t < c.length; t++) { for (var r = c[t], n = !0, o = 1; o < r.length; o++) { var f = r[o]; 0 !== a[f] && (n = !1) } n && (c.splice(t--, 1), e = u(u.s = r[0])) } return e } var n = {}, o = { 9: 0 }, a = { 9: 0 }, c = []; function u(t) { if (n[t]) return n[t].exports; var r = n[t] = { i: t, l: !1, exports: {} }; return e[t].call(r.exports, r, r.exports, u), r.l = !0, r.exports } u.e = function (e) { var t = []; o[e] ? t.push(o[e]) : 0 !== o[e] && { 12: 1 }[e] && t.push(o[e] = new Promise((function (t, r) { for (var n = "static/css/" + ({}[e] || e) + "." + { 1: "31d6cfe0", 3: "31d6cfe0", 10: "31d6cfe0", 12: "0e6db29b", 13: "31d6cfe0", 14: "31d6cfe0", 15: "31d6cfe0", 16: "31d6cfe0", 17: "31d6cfe0", 18: "31d6cfe0", 19: "31d6cfe0", 20: "31d6cfe0", 21: "31d6cfe0" }[e] + ".chunk.css", a = u.p + n, c = document.getElementsByTagName("link"), f = 0; f < c.length; f++) { var i = (s = c[f]).getAttribute("data-href") || s.getAttribute("href"); if ("stylesheet" === s.rel && (i === n || i === a)) return t() } var l = document.getElementsByTagName("style"); for (f = 0; f < l.length; f++) { var s; if ((i = (s = l[f]).getAttribute("data-href")) === n || i === a) return t() } var d = document.createElement("link"); d.rel = "stylesheet", d.type = "text/css", d.onload = t, d.onerror = function (t) { var n = t && t.target && t.target.src || a, c = new Error("Loading CSS chunk " + e + " failed.\n(" + n + ")"); c.code = "CSS_CHUNK_LOAD_FAILED", c.request = n, delete o[e], d.parentNode.removeChild(d), r(c) }, d.href = a, document.getElementsByTagName("head")[0].appendChild(d) })).then((function () { o[e] = 0 }))); var r = a[e]; if (0 !== r) if (r) t.push(r[2]); else { var n = new Promise((function (t, n) { r = a[e] = [t, n] })); t.push(r[2] = n); var c, f = document.createElement("script"); f.charset = "utf-8", f.timeout = 120, u.nc && f.setAttribute("nonce", u.nc), f.src = function (e) { return u.p + "static/js/" + ({}[e] || e) + "." + { 1: "1226531e", 3: "7f90c180", 10: "06e91460", 12: "f61ade57", 13: "e41b4296", 14: "43f92637", 15: "b7ba38b8", 16: "4aac28d8", 17: "7624452a", 18: "8f7a9384", 19: "24452232", 20: "85c99dec", 21: "6f4dc992" }[e] + ".chunk.js" }(e); var i = new Error; c = function (t) { f.onerror = f.onload = null, clearTimeout(l); var r = a[e]; if (0 !== r) { if (r) { var n = t && ("load" === t.type ? "missing" : t.type), o = t && t.target && t.target.src; i.message = "Loading chunk " + e + " failed.\n(" + n + ": " + o + ")", i.name = "ChunkLoadError", i.type = n, i.request = o, r[1](i) } a[e] = void 0 } }; var l = setTimeout((function () { c({ type: "timeout", target: f }) }), 12e4); f.onerror = f.onload = c, document.head.appendChild(f) } return Promise.all(t) }, u.m = e, u.c = n, u.d = function (e, t, r) { u.o(e, t) || Object.defineProperty(e, t, { enumerable: !0, get: r }) }, u.r = function (e) { "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(e, "__esModule", { value: !0 }) }, u.t = function (e, t) { if (1 & t && (e = u(e)), 8 & t) return e; if (4 & t && "object" == typeof e && e && e.__esModule) return e; var r = Object.create(null); if (u.r(r), Object.defineProperty(r, "default", { enumerable: !0, value: e }), 2 & t && "string" != typeof e) for (var n in e) u.d(r, n, function (t) { return e[t] }.bind(null, n)); return r }, u.n = function (e) { var t = e && e.__esModule ? function () { return e.default } : function () { return e }; return u.d(t, "a", t), t }, u.o = function (e, t) { return Object.prototype.hasOwnProperty.call(e, t) }, u.p = "https://creation.codemao.cn/coconut/web/1.21.0/", u.oe = function (e) { throw console.error(e), e }; var f = this.webpackJsonpappcraft = this.webpackJsonpappcraft || [], i = f.push.bind(f); f.push = t, f = f.slice(); for (var l = 0; l < f.length; l++)t(f[l]); var s = i; r() }([])</script>
+    <script src="https://creation.codemao.cn/coconut/web/1.21.0/static/js/0.7606bbf8.chunk.js"></script>
+    <script src="https://creation.codemao.cn/coconut/web/1.21.0/static/js/2.f99c09cf.chunk.js"></script>
+    <script src="https://creation.codemao.cn/coconut/web/1.21.0/static/js/main.bad2c967.chunk.js"></script>
+    <script>
+        !function () {
+            var y = window.fetch;
+            window.fetch = function (input, init) {
+                var url = input;
+                if (input.includes("/editor/service/compile")) {
+                    return new Promise(r => {
+                        var x = document.createElement("iframe");
+                        var x1 = document.createElement("div");
+                        x.COCOMSPS = true;
+                        x1.innerHTML = `<div data-html2canvas-ignore="true" tabindex="-1" class="coco-dialog style_loadingDialog__1z-ob" style="display: block;"><div class="coco-dialog-mask"></div><div class="coco-dialog-scroll"><div class="coco-dialog-wrapper show"><div class=""></div><div class="coco-dialog-content"><div class="style_icon__1TIQs"><i class="coco-iconfont"><svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false"><use xlink:href="#icon-loading2"></use></svg></i></div><p>正在加载预览...</p></div></div></div></div>`
+                        document.body.append(x1);
+                        function xxxxx({ data }) {
+                            if (data.COCOMSPS) {
+                                if (data.data) {
+                                    window.removeEventListener("message", xxxxx);
+                                    x1.remove();
+                                    x.remove()
+                                    r({})
+                                }
+                            }
+                        }
+                        window.addEventListener("message", xxxxx)
+                        document.body.append(x);
+                        x.src = `https://coco.codemao.cn/editor/player/196057882?channel=h5&d=${encodeURIComponent(init.body)}`
+                    })
+                }
+                return y(url, init);
+            }
+        }()
+    </script>
+</body>
+
+</html>
